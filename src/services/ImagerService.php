@@ -79,6 +79,11 @@ class ImagerService extends Component
     public static $remoteImageSessionCache = [];
 
     /**
+     * @var array
+     */
+    private $units = ['w', 'h', 'x+h', 'vw', 'vh', 'x'];
+
+    /**
      * Translate dictionary for translating transform keys into filename markers
      *
      * @var array
@@ -335,7 +340,15 @@ class ImagerService extends Component
 
             /** @var TransformerInterface $transformer */
             $transformer = new self::$transformers[self::$transformConfig->transformer]();
-            $transformedImages = $transformer->transform($image, $transforms);
+
+            if(preg_match('/\.svg$/i',$image) && !self::$transformConfig->convertSVG){ // noop
+              $returnType = 'object';
+              $transformedImages = $transformer->transform($image, [["noop" => true]]);
+            } else {
+              $transformedImages = $transformer->transform($image, $transforms);
+            }
+
+            // $transformedImages = $transformer->transform($image, $transforms);
         } catch (ImagerException $e) {
             if (self::$transformConfig->suppressExceptions) {
                 return null;
@@ -350,7 +363,7 @@ class ImagerService extends Component
         if ($transformedImages === null) {
             return null;
         }
-
+        // var_dump($transformedImages[0]);
         return $returnType === 'object' ? $transformedImages[0] : $transformedImages;
     }
 
@@ -371,7 +384,7 @@ class ImagerService extends Component
             return '';
         }
 
-        foreach ($images as $image) {
+        foreach ($images as $k => $image) {
             switch ($descriptor) {
                 case 'w':
                     if (!isset($generated[$image->getWidth()])) {
@@ -392,10 +405,63 @@ class ImagerService extends Component
                         $generated[$image->getWidth().'x'.$image->getHeight()] = true;
                     }
                     break;
+                case 'x':
+                    $r .= $image->getUrl()." " . ($k + 1) . "x, ";
+                    $generated["x"] = true;
+                    break;
             }
         }
 
         return $r !== '' ? substr($r, 0, -2) : '';
+    }
+
+    /**
+     * Creates srcset string and attribute
+     *
+     * @param array|mixed  $images
+     * @param string $prefix
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetAttr($images, $descriptor = 'w', $prefix = ''){
+      if(!in_array($descriptor, $this->units)){
+        $prefix = $descriptor;
+        $descriptor = 'w';
+      }
+      $src = "";
+      if (is_array($images)) {
+        $srcString = $this->srcset($images,$descriptor);
+        $src = "{$prefix}srcset=\"$srcString\"";
+      } else if(is_object($images)){
+        $src = "{$prefix}src=\"{$images->url}\"";
+      }
+      return $src;
+    }
+
+    /**
+     * Creates custom src string and attribute
+     *
+     * @param array|mixed  $images
+     * @param string $tag
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetCustomAttr($images, $descriptor = 'w', $tag = "data-bgset,data-bg"){
+      if(!in_array($descriptor, $this->units)){
+        $tag = $descriptor;
+        $descriptor = 'w';
+      }
+      $tags = explode(",",$tag);
+      $src = "";
+      if (is_array($images)) {
+        $srcString = $this->srcset($images,$descriptor);
+        $src = "{$tags[0]}=\"$srcString\"";
+      } else if(is_object($images)){
+        $src = ($tags[1]?$tags[1]:$tags[0]) ."=\"{$images->url}\"";
+      }
+      return $src;
     }
 
     /**

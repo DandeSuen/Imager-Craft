@@ -10,7 +10,7 @@ use aelvan\imager\exceptions\ImagerException;
 
 use Imagine\Exception\InvalidArgumentException;
 use Imagine\Image\Box;
-
+use SimpleXMLElement;
 use yii\base\InvalidConfigException;
 
 class NoopImageModel implements TransformedImageInterface
@@ -20,6 +20,7 @@ class NoopImageModel implements TransformedImageInterface
     public $url;
     public $extension;
     public $mimeType;
+    public $source;
     
     /**
      * @var int
@@ -56,6 +57,8 @@ class NoopImageModel implements TransformedImageInterface
         $this->url = $sourceModel->url;
         $this->isNew = false;
 
+        $this->source = $sourceModel->source;
+
         $this->extension = $sourceModel->extension;
         $this->size = @filesize($sourceModel->getFilePath());
 
@@ -70,15 +73,27 @@ class NoopImageModel implements TransformedImageInterface
         /** @var ConfigModel $settings */
         $config = ImagerService::getConfig();
 
-        $sourceImageInfo = @getimagesize($sourceModel->getFilePath());
+        if($this->extension === 'svg') {
+          $xml = file_get_contents($sourceModel->getFilePath());
+          $svg = new SimpleXMLElement($xml);
+          $sourceImageInfo = array((int)$svg['width'], (int)$svg['height']);
+          if(count(explode(' ', $svg['viewBox'])) === 4){
+            if(!$sourceImageInfo[0]) $sourceImageInfo[0] = explode(' ', $svg['viewBox'])[2];
+            if(!$sourceImageInfo[1]) $sourceImageInfo[1] = explode(' ', $svg['viewBox'])[3];
+          }
+        } else if(!($sourceImageInfo = @getimagesize($sourceModel->getFilePath()))){
+          // Not supported file.
+        }
 
         try {
+
             $sourceSize = new Box($sourceImageInfo[0], $sourceImageInfo[1]);
             $targetCrop = ImagerHelpers::getCropSize($sourceSize, $transform, $config->getSetting('allowUpscale', $transform));
             $this->width = $targetCrop->getWidth();
             $this->height = $targetCrop->getHeight();
+
         } catch (InvalidArgumentException $e) {
-            throw new ImagerException($e->getMessage(), $e->getCode(), $e);
+            throw new ImagerException($e->getMessage() , $e->getCode(), $e);
         }
     }
 

@@ -60,6 +60,8 @@ class CraftTransformedImageModel implements TransformedImageInterface
      */
     public $isNew;
 
+    public $source;
+
     /**
      * Constructor
      *
@@ -78,6 +80,8 @@ class CraftTransformedImageModel implements TransformedImageInterface
 
         $this->extension = $targetModel->extension;
         $this->size = @filesize($targetModel->getFilePath());
+
+        $this->source = $sourceModel->url;
 
         try {
             $this->mimeType = FileHelper::getMimeType($targetModel->getFilePath());

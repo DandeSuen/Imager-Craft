@@ -54,6 +54,35 @@ class ImagerVariable
     }
 
     /**
+     * Creates srcset or set string
+     * Takes an array of models that supports getUrl() and getWidth(), and returns a srcset and returns a srcset string
+     *
+     * @param array|mixed  $images
+     * @param string $prefix
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetAttr($images, $descriptor = 'w', $prefix = ''): string
+    {
+      return Plugin::$plugin->imager->srcsetAttr($images, $descriptor, $prefix);
+    }
+
+    /**
+     * Creates bgset or bg string
+     *
+     * @param array|mixed  $images
+     * @param string $prefix
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetCustomAttr($images, $descriptor = 'w',$tag = 'data-bgset,data-bg'): string
+    {
+      return Plugin::$plugin->imager->srcsetCustomAttr($images, $descriptor, $tag);
+    }
+
+    /**
      * Returns a base64 encoded transparent pixel.
      *
      * @param int    $width

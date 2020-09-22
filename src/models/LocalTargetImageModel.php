@@ -27,6 +27,7 @@ use aelvan\imager\services\ImagerService;
  */
 class LocalTargetImageModel
 {
+    public $source = '';
     public $path = '';
     public $url = '';
     public $filename = '';
@@ -41,6 +42,7 @@ class LocalTargetImageModel
      */
     public function __construct($source, $transform)
     {
+        $this->source = $source->url;
         /** @var ConfigModel $settings */
         $config = ImagerService::getConfig();
 
@@ -125,4 +127,6 @@ class LocalTargetImageModel
 
         return $patternFilename;
     }
+
+
 }

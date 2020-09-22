@@ -45,6 +45,7 @@ class LocalSourceImageModel
     public $filename = '';
     public $basename = '';
     public $extension = '';
+    public $source = '';
 
     /** @var Asset|null $image */
     private $asset;
@@ -74,6 +75,8 @@ class LocalSourceImageModel
         $settings = ImagerService::getConfig();
 
         if (\is_string($image)) {
+            $this->source = $image;
+
             if (strncmp($image, $settings->imagerUrl, \strlen($settings->imagerUrl)) === 0) {
                 // Url to a file that is in the imager library
                 $this->getPathsForLocalImagerFile($image);
@@ -96,6 +99,7 @@ class LocalSourceImageModel
             // It's some kind of model
             if ($image instanceof CraftTransformedImageModel) {
                 $this->getPathsForLocalImagerFile($image->url);
+                $this->source = $image->url;
             } else {
                 if ($image instanceof Asset) {
                     $this->asset = $image;
@@ -237,9 +241,7 @@ class LocalSourceImageModel
     {
         /** @var ConfigModel $settings */
         $config = ImagerService::getConfig();
-
         $imageString = '/'.str_replace($config->getSetting('imagerUrl'), '', $image);
-
         $pathParts = pathinfo($imageString);
 
         $this->transformPath = $pathParts['dirname'];
@@ -259,7 +261,7 @@ class LocalSourceImageModel
     {
         $this->transformPath = ImagerHelpers::getTransformPathForPath($image);
         $pathParts = pathinfo($image);
-
+        
         $this->path = FileHelper::normalizePath(Yii::getAlias('@webroot').'/'.$pathParts['dirname']);
         $this->url = $image;
         $this->filename = $pathParts['basename'];

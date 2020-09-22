@@ -1,5 +1,22 @@
 # Imager Changelog
 
+## 2.4.3 - 2020-09-22
+
+- Add Azure blog Storage support ( Now, The Imager-craft support upload to Azure blog storage. )
+- Add fillter `srcsetAttr` ( Auto output html tag attribute, if input is array, output `srcset="url1 width, url2 width"` )
+- Add fillter `srcsetCustomAttr`
+- Add fillter `silhouette`
+- Add new config option `convertSVG`, Default value `false`. ( `true` convert svg, `false` not convert svg )
+- Add new config option `noopSaveLocal`, Default value `true`. ( noop == true && noopSaveLocal == true , Imager will copy source file to local )
+
+## 2.4.2 - 2020-06-11
+
+- Change new version number.
+
+## 2.4.1 - 2020-06-11
+
+- Filtered unkown suffix ( cantains .svg )
+
 ## 2.4.0 - 2020-02-11
 
 > {warning} This version of Imager is no longer actively maintained. [Imager X](https://plugins.craftcms.com/imager-x) is the successor of Imager 2.0, a commercial plugin with several new and awesome features.

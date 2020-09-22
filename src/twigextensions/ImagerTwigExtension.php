@@ -51,6 +51,9 @@ class ImagerTwigExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter('srcset', [$this, 'srcsetFilter']),
+            new \Twig_SimpleFilter('srcsetAttr', [$this, 'srcsetAttrFilter']),
+            new \Twig_SimpleFilter('srcsetCustomAttr', [$this, 'srcsetCustomAttrFilter']),
+            new \Twig_SimpleFilter('silhouette', [$this, 'silhouetteFilter']),
         ];
     }
     
@@ -65,5 +68,48 @@ class ImagerTwigExtension extends \Twig_Extension
     public function srcsetFilter($images, $descriptor='w')
     {
         return Plugin::$plugin->imager->srcset($images, $descriptor);
+    }
+
+    /**
+     * Twig filter interface for srcsetAttr
+     *
+     * @param array $images
+     * @param string $prefix
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetAttrFilter($images, $descriptor = 'w', $prefix = '')
+    {
+        return Plugin::$plugin->imager->srcsetAttr($images, $descriptor, $prefix);
+    }
+
+    /**
+     * Twig filter interface for srcsetCustomAttr
+     *
+     * @param array $images
+     * @param string $prefix
+     * @param string $descriptor
+     *
+     * @return string
+     */
+    public function srcsetCustomAttrFilter($images, $descriptor = 'w', $tag = 'data-bgset,data-bg')
+    {
+        return Plugin::$plugin->imager->srcsetCustomAttr($images, $descriptor, $tag);
+    }
+
+    /**
+     * Twig filter silhouette
+     *
+     * @param array $images
+     * @param object $transforms
+     *
+     * @return string
+     */
+    public function silhouetteFilter($images, $transforms = ["width" => 50]){
+      $image = is_array($images)?$images[count($images) - 1]:$images;
+      $url = is_object($image)?$image->source:$image;
+      $silhouette = Plugin::$plugin->imager->transformImage(str_replace(\Yii::getAlias('@webroot'), "", $url), $transforms);
+      return $silhouette->url;
     }
 }

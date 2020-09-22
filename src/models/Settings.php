@@ -42,6 +42,7 @@ class Settings extends Model
     public $useRemoteUrlQueryString = false;
     public $instanceReuseEnabled = false;
     public $noop = false;
+    public $noopSaveLocal = true;
     public $suppressExceptions = false;
     public $convertToRGB = false;
     public $skipExecutableExistCheck = false;
@@ -51,7 +52,7 @@ class Settings extends Model
     public $fillAttribute = 'width';
     public $fillInterval = '200';
     public $clearKey = '';
-    
+    public $convertSVG = false;
     public $useForNativeTransforms = false;
     public $useForCpThumbs = false;
 
@@ -73,7 +74,7 @@ class Settings extends Model
             'excludeFromPurge' => false,
         ]
     ];
-    
+
     public $optimizeType = 'job';
     public $optimizers = [];
     public $optimizerConfig = [
@@ -125,7 +126,7 @@ class Settings extends Model
             'quality' => 'medium'
         ],
     ];
-    
+
     public $storages = [];
     public $storageConfig = [
         'aws' => [
@@ -144,6 +145,12 @@ class Settings extends Model
             'bucket' => '',
             'folder' => '',
         ],
+        'abs' => [
+          'useHttps'      => true,
+          'accountName'   => '',
+          'accountKey'    => '',
+          'containerName' => ''
+        ]
     ];
 
     /**
@@ -154,7 +161,7 @@ class Settings extends Model
     public function __construct($config = [])
     {
         parent::__construct($config);
-        
+
         if (!empty($config)) {
             \Yii::configure($this, $config);
         }

@@ -83,16 +83,14 @@ class CraftTransformer extends Component implements TransformerInterface
     {
         /** @var ConfigModel $settings */
         $config = ImagerService::getConfig();
-
         $sourceModel = new LocalSourceImageModel($image);
-
         $transformedImages = [];
-
-        foreach ($transforms as $transform) {
+        
+        foreach ($transforms as $k => $transform) {
             if ($config->getSetting('noop', $transform)) {
                 $msg = Craft::t('imager', 'Noop activated, returning “{path}”.', ['path' => $sourceModel->url]);
                 Craft::info($msg, __METHOD__);
-                $transformedImages[] = new NoopImageModel($sourceModel, $transform);
+                $transformedImages[] = $this->getNoopImage($sourceModel, $transform);
             } else {
                 $transformedImages[] = $this->getTransformedImage($sourceModel, $transform);
             }
@@ -168,6 +166,84 @@ class CraftTransformer extends Component implements TransformerInterface
 
     // Private Methods
     // =========================================================================
+
+    private function getNoopImage($sourceModel, $transform){
+      /** @var ConfigModel $settings */
+      $config = ImagerService::getConfig();
+
+      if ($this->imagineInstance === null) {
+          $msg = Craft::t('imager', 'Imagine instance was not created for driver “{driver}”.', ['driver' => ImagerService::$imageDriver]);
+          Craft::error($msg, __METHOD__);
+          throw new ImagerException($msg);
+      }
+
+      // Create target model
+      $targetModel = new LocalTargetImageModel($sourceModel, []);
+
+      // Set save options
+      // $saveOptions = $this->getSaveOptions($targetModel->extension, $transform);
+
+      // Do transform if transform doesn't exist, cache is disabled, or cache expired
+      if (!$config->getSetting('cacheEnabled', $transform) ||
+          !file_exists($targetModel->getFilePath()) ||
+          (($config->getSetting('cacheDuration', $transform) !== false) && (FileHelper::lastModifiedTime($targetModel->getFilePath()) + $config->getSetting('cacheDuration', $transform) < time()))
+      ) {
+          // Make sure that we have a local copy.
+          $sourceModel->getLocalCopy();
+
+          // Check all the things that could go wrong(tm)
+          if (!realpath($sourceModel->path)) {
+            $msg = Craft::t('imager', 'Source folder “{sourcePath}” does not exist', ['sourcePath' => $sourceModel->path]);
+            Craft::error($msg, __METHOD__);
+            throw new ImagerException($msg);
+        }
+
+        if (!realpath($targetModel->path)) {
+            try {
+                FileHelper::createDirectory($targetModel->path);
+            } catch (Exception $e) {
+                // ignore for now, trying to create
+            }
+
+            if (!realpath($targetModel->path)) {
+                $msg = Craft::t('imager', 'Target folder “{targetPath}” does not exist and could not be created', ['targetPath' => $targetModel->path]);
+                Craft::error($msg, __METHOD__);
+                throw new ImagerException($msg);
+            }
+        }
+
+        try {
+            $targetPathIsWriteable = FileHelper::isWritable($targetModel->path);
+        } catch (ErrorException $e) {
+            $targetPathIsWriteable = false;
+        }
+
+        if ($targetModel->path && !$targetPathIsWriteable) {
+            $msg = Craft::t('imager', 'Target folder “{targetPath}” is not writeable', ['targetPath' => $targetModel->path]);
+            Craft::error($msg, __METHOD__);
+            throw new ImagerException($msg);
+        }
+
+        if (!file_exists($sourceModel->getFilePath())) {
+            $msg = Craft::t('imager', 'Requested image “{fileName}” does not exist in path “{sourcePath}”', ['fileName' => $sourceModel->filename, 'sourcePath' => $sourceModel->path]);
+            Craft::error($msg, __METHOD__);
+            throw new ImagerException($msg);
+        }
+
+        if (!Craft::$app->images->checkMemoryForImage($sourceModel->getFilePath())) {
+            $msg = Craft::t('imager', 'Not enough memory available to perform this image operation.');
+            Craft::error($msg, __METHOD__);
+            throw new ImagerException($msg);
+        }
+
+        if($config->getSetting('noopSaveLocal', $transform)){
+          copy($sourceModel->getFilePath(), $targetModel->getFilePath());
+        } else {
+          $targetModel = $sourceModel;
+        }
+      }
+      return new NoopImageModel($targetModel, []);
+    }
 
     /**
      * Gets one transformed image based on source image and transform
