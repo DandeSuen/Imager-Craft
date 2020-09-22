@@ -831,40 +831,38 @@ Outputs a srcset string from an array of transformed images.
 
     <img src="{{ craft.imager.placeholder({ width: 16, height: 9 }) }}" sizes="100vw" srcset="{{ transformedImages | srcset }}">
 
-### srcsetAttr([descriptor='w'], [prefix = ''])
-  eg.
+Outputs a srcset string from an array of transformed images.
+
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <img {{ transformedImages | srcset }} sizes="100vw" >
+
   output:
   <img srcset="url1 400w, url2 1200w" sizes="100vw" >
 
-  eg.
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <img {{ transformedImages | srcset }} sizes="100vw" >
   output:
   <img src="url1" sizes="100vw" >
 
-  eg.
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <img {{ transformedImages | srcset('h') }} sizes="100vw" >
   output:
   <img srcset="url1 400h, url2 1200h" sizes="100vw" >
 
-  eg.
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <img {{ transformedImages | srcset('data-') }} sizes="100vw" >
   output:
   <img data-srcset="url1 400w, url2 1200w" sizes="100vw" >
 
 ### srcsetCustomAttr([descriptor='w'], [tag='data-bgset,data-bg'])
-  eg.
+Outputs a srcset string from an array of transformed images.
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <div {{ transformedImages | srcsetCustomAttr }}>
   output:
   <div data-bgset="url1 400w, url2 1200w">
 
 ### silhouette([$transforms = ["width" => 50]])
-  eg.
+Outputs a srcset string from an array of transformed images.
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
   <img src="{{ transformedImages | silhouette }}" data-{{ transformedImages | srcset }} sizes="100vw" >
   output:
