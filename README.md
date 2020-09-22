@@ -836,35 +836,41 @@ Outputs a srcset string from an array of transformed images.
 
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-  <img {{ transformedImages | srcset }} sizes="100vw" >
+    <img {{ transformedImages | srcset }} sizes="100vw" >
 
-output:
+Output:
 
-  <img srcset="url1 400w, url2 1200w" sizes="100vw" >
+    <img srcset="url1 400w, url2 1200w" sizes="100vw" >
+
+Example:
 
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-  <img {{ transformedImages | srcset }} sizes="100vw" >
+    <img {{ transformedImages | srcset }} sizes="100vw" >
 
-output:
+Output:
 
-  <img src="url1" sizes="100vw" >
+    <img src="url1" sizes="100vw" >
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
-
-  <img {{ transformedImages | srcset('h') }} sizes="100vw" >
-
-output:
-
-  <img srcset="url1 400h, url2 1200h" sizes="100vw" >
+Example:
 
   {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-  <img {{ transformedImages | srcset('data-') }} sizes="100vw" >
+    <img {{ transformedImages | srcset('h') }} sizes="100vw" >
 
-output:
+Output:
 
-  <img data-srcset="url1 400w, url2 1200w" sizes="100vw" >
+    <img srcset="url1 400h, url2 1200h" sizes="100vw" >
+
+Example:
+
+  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+
+    <img {{ transformedImages | srcset('data-') }} sizes="100vw" >
+
+Output:
+
+    <img data-srcset="url1 400w, url2 1200w" sizes="100vw" >
 
 ### srcsetCustomAttr([descriptor='w'], [tag='data-bgset,data-bg'])
 Outputs a srcset string from an array of transformed images.
