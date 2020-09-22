@@ -28,7 +28,7 @@ class AzureStorage implements ImagerStorageInterface
     /** @var ConfigModel $settings */
     $config = ImagerService::getConfig();
     $defaultSettings = new Settings();
-    $settings = array_merge($defaultSettings['storageConfig']['asb'],$settings);
+    $settings = array_merge($defaultSettings['storageConfig']['abs'],$settings);
     $connectionString = sprintf('DefaultEndpointsProtocol=%s;AccountName=%s;AccountKey=%s', $settings['useHttps']?'https':'http', $settings['accountName'], $settings['accountKey']);
     // $connectionString = 'UseDevelopmentStorage=true';
     $blobClient = BlobRestProxy::createBlobService($connectionString);
