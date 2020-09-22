@@ -46,6 +46,7 @@ class LocalSourceImageModel
     public $basename = '';
     public $extension = '';
     public $source = '';
+    public $isNew = false;
 
     /** @var Asset|null $image */
     private $asset;

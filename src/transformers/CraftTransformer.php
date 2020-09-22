@@ -180,9 +180,6 @@ class CraftTransformer extends Component implements TransformerInterface
       // Create target model
       $targetModel = new LocalTargetImageModel($sourceModel, []);
 
-      // Set save options
-      // $saveOptions = $this->getSaveOptions($targetModel->extension, $transform);
-
       // Do transform if transform doesn't exist, cache is disabled, or cache expired
       if (!$config->getSetting('cacheEnabled', $transform) ||
           !file_exists($targetModel->getFilePath()) ||
@@ -241,6 +238,7 @@ class CraftTransformer extends Component implements TransformerInterface
         } else {
           $targetModel = $sourceModel;
         }
+        $targetModel->isNew = true;
       }
       return new NoopImageModel($targetModel, []);
     }

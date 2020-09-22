@@ -32,7 +32,6 @@ class AzureStorage implements ImagerStorageInterface
     $connectionString = sprintf('DefaultEndpointsProtocol=%s;AccountName=%s;AccountKey=%s', $settings['useHttps']?'https':'http', $settings['accountName'], $settings['accountKey']);
     // $connectionString = 'UseDevelopmentStorage=true';
     $blobClient = BlobRestProxy::createBlobService($connectionString);
-
     if (!file_exists($file)) {
       Craft::error("ERROR AzureStorage: file is not exists.", __METHOD__);
       return false;
@@ -41,10 +40,9 @@ class AzureStorage implements ImagerStorageInterface
     // $contentType = 'text/plain; charset=UTF-8';
     $options = new CreateBlockBlobOptions();
     $options->setContentType(FileHelper::getMimeType($file));
-
     try {
       //Upload blob
-      $blobClient->createBlockBlob($settings['containerName'], str_replace('\\', '/', $uri), fopen($file, "r"), $options);
+      $res = $blobClient->createBlockBlob($settings['containerName'], str_replace('\\', '/', $uri), fopen($file, "r"), $options);
     } catch (ServiceException $e) {
       Craft::error("ERROR AzureStorage: " . $e->getCode() . " " . $e->getMessage() . PHP_EOL, __METHOD__);
       return false;

@@ -55,7 +55,7 @@ class NoopImageModel implements TransformedImageInterface
         $this->path = $sourceModel->getFilePath();
         $this->filename = $sourceModel->filename;
         $this->url = $sourceModel->url;
-        $this->isNew = false;
+        $this->isNew = $sourceModel->isNew;
 
         $this->source = $sourceModel->source;
 

@@ -341,6 +341,7 @@ class ImagerService extends Component
             /** @var TransformerInterface $transformer */
             $transformer = new self::$transformers[self::$transformConfig->transformer]();
 
+            // if(FileHelper::isSvg($image) && !self::$transformConfig->convertSVG){ // noop
             if(preg_match('/\.svg$/i',$image) && !self::$transformConfig->convertSVG){ // noop
               $returnType = 'object';
               $transformedImages = $transformer->transform($image, [["noop" => true]]);
