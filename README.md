@@ -834,7 +834,7 @@ Outputs a srcset string from an array of transformed images.
 ### srcsetAttr([descriptor='w'], [prefix = ''])
 Outputs a srcset string from an array of transformed images.
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
     <img {{ transformedImages | srcset }} sizes="100vw" >
 
@@ -844,7 +844,7 @@ Output:
 
 Example:
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
     <img {{ transformedImages | srcset }} sizes="100vw" >
 
@@ -854,7 +854,7 @@ Output:
 
 Example:
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
     <img {{ transformedImages | srcset('h') }} sizes="100vw" >
 
@@ -864,7 +864,7 @@ Output:
 
 Example:
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
     <img {{ transformedImages | srcset('data-') }} sizes="100vw" >
 
@@ -875,24 +875,24 @@ Output:
 ### srcsetCustomAttr([descriptor='w'], [tag='data-bgset,data-bg'])
 Outputs a srcset string from an array of transformed images.
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-  <div {{ transformedImages | srcsetCustomAttr }}>
+    <div {{ transformedImages | srcsetCustomAttr }}>
 
-output:
+Output:
 
-  <div data-bgset="url1 400w, url2 1200w">
+    <div data-bgset="url1 400w, url2 1200w">
 
 ### silhouette([$transforms = ["width" => 50]])
 Outputs a srcset string from an array of transformed images.
 
-  {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
+    {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-  <img src="{{ transformedImages | silhouette }}" data-{{ transformedImages | srcset }} sizes="100vw" >
+    <img src="{{ transformedImages | silhouette }}" data-{{ transformedImages | srcset }} sizes="100vw" >
 
-output:
+Output:
 
-  <img src="silhouette.jpg" data-srcset="url1 400w, url2 1200w" sizes="100vw" >
+    <img src="silhouette.jpg" data-srcset="url1 400w, url2 1200w" sizes="100vw" >
 
 ---
 
