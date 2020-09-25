@@ -82,6 +82,7 @@ class ImagerService extends Component
      * @var array
      */
     private $units = ['w', 'h', 'x+h', 'vw', 'vh', 'x'];
+    private $srcType = ['min', 'middle', 'max', 'first', 'center', 'last'];
 
     /**
      * Translate dictionary for translating transform keys into filename markers
@@ -416,6 +417,19 @@ class ImagerService extends Component
         return $r !== '' ? substr($r, 0, -2) : '';
     }
 
+    private function srcsetSort($images, $descriptor = 'w'){
+      usort($images, function($a, $b) use ($descriptor){
+        if(in_array($descriptor, ['h','vh'])){
+          if($a->getHeight() == $b->getHeight()) return 0;
+          return ($a->getHeight() < $b->getHeight())?-1:1;
+        } else {
+          if($a->getWidth() == $b->getWidth()) return 0;
+          return ($a->getWidth() < $b->getWidth())?-1:1;
+        }
+      });
+      return $images;
+    }
+
     /**
      * Creates srcset string and attribute
      *
@@ -425,19 +439,58 @@ class ImagerService extends Component
      *
      * @return string
      */
-    public function srcsetAttr($images, $descriptor = 'w', $prefix = ''){
-      if(!in_array($descriptor, $this->units)){
-        $prefix = $descriptor;
-        $descriptor = 'w';
-      }
-      $src = "";
+    public function srcsetAttr($images, $config){
+
+      // Create config
+      $defaultConfig = Plugin::$plugin->getSettings()->srcsetConfig;
+      $config = array_merge($defaultConfig, $config);
+
+      if(!in_array($config['descriptor'], $this->units)) $config['descriptor'] = 'w';
+      if(!in_array($config['srcDefault'], $this->srcType) && !(ctype_digit($config['srcDefault']) && $config['srcDefault'] < count($images))) $config['srcDefault'] = "max";
+
+      $srcStandby = $srcset = $src = "";
       if (is_array($images)) {
-        $srcString = $this->srcset($images,$descriptor);
-        $src = "{$prefix}srcset=\"$srcString\"";
-      } else if(is_object($images)){
-        $src = "{$prefix}src=\"{$images->url}\"";
+        $srcset = $this->srcset($images, $config['descriptor']);
+
+        if(in_array($config['srcDefault'], $this->srcType) || (ctype_digit($config['srcDefault']) && $config['srcDefault'] < count($images))){
+          $imagesSort = $images;
+          if(in_array($config['srcDefault'], ['min', 'middle', 'max'])){
+            $imagesSort = $this->srcsetSort($images, $config['descriptor']); // ['min', 'middle', 'max', 'first', 'center', 'last']
+          }
+          
+          if(in_array($config['srcDefault'], ['min', 'first'])){
+            $src = $imagesSort[0]->getUrl();
+          }
+          if(in_array($config['srcDefault'], ['middle', 'center'])){
+            $src = $imagesSort[ceil(count($images)/2)]->getUrl();
+          }
+          if(in_array($config['srcDefault'], ['max', 'last'])){
+            $src = $imagesSort[count($images)-1]->getUrl();
+          }
+        }
+      } else if (is_object($images)){
+        $src = $images->getUrl();
+      } else if(is_string($images)){
+        return "";
       }
-      return $src;
+
+      if($config['prefix'] != ''){
+        $srcStandby = $src;
+        $src = "";
+        switch($config['PHType']){
+          case 'silhouette':
+            $src = $this->silhouette($images, $config['PHConfig']);
+            break;
+          case 'placeholder':
+            $src = Plugin::$plugin->placeholder->placeholder($config['PHConfig']);
+            break;
+        }
+      }
+      $srcset = $srcset?"{$config['prefix']}srcset=\"{$srcset}\" ":"";
+      $srcStandby = $srcStandby?"{$config['prefix']}src=\"{$srcStandby}\" ":"";
+      $src = $src?"src=\"{$src}\"":"";
+      
+      return $srcset . $srcStandby . $src;
     }
 
     /**
@@ -463,6 +516,18 @@ class ImagerService extends Component
         $src = ($tags[1]?$tags[1]:$tags[0]) ."=\"{$images->url}\"";
       }
       return $src;
+    }
+
+    /**
+     * Twig filter silhouette
+     */
+    public function silhouette($images, $transforms){
+      $default = ["width" => 50];
+      $transforms = array_merge($default, $transforms);
+      $image = is_array($images)?$images[count($images) - 1]:$images;
+      $url = is_object($image)?$image->source:$image;
+      $silhouette = Plugin::$plugin->imager->transformImage(str_replace(\Yii::getAlias('@webroot'), "", $url), $transforms);
+      return $silhouette->url;
     }
 
     /**

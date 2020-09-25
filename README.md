@@ -62,7 +62,7 @@ Imager 2.0 requires Craft 3.x. The Craft 2 version is available in [the master b
 Configuration
 ---
 
-All configuration settings can be overridden by creating an `imager.php` file in your config folder, and adding parameters as needed. Please refer to the [Settings.php file](https://github.com/DandeSuen/Imager-Craft/blob/craft3/src/models/Settings.php) for additional pointers regarding available parameters and defaults.
+All configuration settings can be overridden by creating an `imager.php` file in your config folder, and adding parameters as needed. Please refer to the [Settings.php file](https://github.com/dande-sun/Imager-Craft/blob/craft3/src/models/Settings.php) for additional pointers regarding available parameters and defaults.
 
 ### transformer [string]
 *Default: `'craft'`*
@@ -539,6 +539,17 @@ have --strip compiled in)._
 
 Configuration for additional, custom optimizers can also be added. 
 
+### srcsetConfig [array]
+The Settings model provides the following default `srcsetConfig`:
+
+    'srcsetConfig' = [
+      'srcDefault'  => 'max', // ['min', 'middle', 'max', 'first', 'center', 'last'] or Number
+      'PHType'      => 'silhouette', // ['silhouette','placeholder'] or null
+      'PHConfig'    => [], // if `PHType == 'silhouette'`, PHConfig need silhouette config. if `PHType == 'placeholder'`, PHConfig need placeholder config
+      'descriptor'  => 'w', // ['w', 'h', 'x+h', 'vw', 'vh', 'x']
+      'prefix'      => '' // like 'data-'
+    ]
+
 ### storages [array]
 *Default: `[]`*  
 An array of handles to enabled storages. Storages needs to be configured in `storageConfig`.
@@ -831,22 +842,32 @@ Outputs a srcset string from an array of transformed images.
 
     <img src="{{ craft.imager.placeholder({ width: 16, height: 9 }) }}" sizes="100vw" srcset="{{ transformedImages | srcset }}">
 
-### srcsetAttr([descriptor='w'], [prefix = ''])
-Outputs a srcset string from an array of transformed images.
+### srcsetAttr([srcsetConfig = []])
+Outputs a srcset string from an array of transformed images. 
+srcsetConfig default:
+    srcsetConfig = [
+      'srcDefault'  => 'max', // ['min', 'middle', 'max', 'first', 'center', 'last'] or Number
+      'PHType'      => 'silhouette', // ['silhouette','placeholder'] or null
+      'PHConfig'    => [], // if `PHType == 'silhouette'`, PHConfig = silhouette config. if `PHType == 'placeholder'`, PHConfig = placeholder config
+      'descriptor'  => 'w', // ['w', 'h', 'x+h', 'vw', 'vh', 'x']
+      'prefix'      => '' // like 'data-'
+    ]
+
+Example:
 
     {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-    <img {{ transformedImages | srcset }} sizes="100vw" >
+    <img {{ transformedImages | srcsetAttr }} sizes="100vw" >
 
 Output:
 
-    <img srcset="url1 400w, url2 1200w" sizes="100vw" >
+    <img srcset="url1 400w, url2 1200w" src="url2" sizes="100vw" >
 
 Example:
 
     {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-    <img {{ transformedImages | srcset }} sizes="100vw" >
+    <img {{ transformedImages | srcsetAttr }} sizes="100vw" >
 
 Output:
 
@@ -856,7 +877,7 @@ Example:
 
     {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-    <img {{ transformedImages | srcset('h') }} sizes="100vw" >
+    <img {{ transformedImages | srcsetAttr({'descriptor': 'h'}) }} sizes="100vw" >
 
 Output:
 
@@ -866,7 +887,7 @@ Example:
 
     {% set transformedImages = craft.imager.transformImage(image, [{ width: 400 },{ width: 1200 }], { ratio: 16/9 }, { fillTransforms: true }) %}
 
-    <img {{ transformedImages | srcset('data-') }} sizes="100vw" >
+    <img {{ transformedImages | srcsetAttr({'prefix':'data-'}) }} sizes="100vw" >
 
 Output:
 

@@ -79,9 +79,9 @@ class ImagerTwigExtension extends \Twig_Extension
      *
      * @return string
      */
-    public function srcsetAttrFilter($images, $descriptor = 'w', $prefix = '')
+    public function srcsetAttrFilter($images, $config = [])
     {
-        return Plugin::$plugin->imager->srcsetAttr($images, $descriptor, $prefix);
+        return Plugin::$plugin->imager->srcsetAttr($images, $config);
     }
 
     /**
@@ -107,9 +107,6 @@ class ImagerTwigExtension extends \Twig_Extension
      * @return string
      */
     public function silhouetteFilter($images, $transforms = ["width" => 50]){
-      $image = is_array($images)?$images[count($images) - 1]:$images;
-      $url = is_object($image)?$image->source:$image;
-      $silhouette = Plugin::$plugin->imager->transformImage(str_replace(\Yii::getAlias('@webroot'), "", $url), $transforms);
-      return $silhouette->url;
+      return Plugin::$plugin->imager->silhouette($images, $transforms);
     }
 }

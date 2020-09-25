@@ -1,5 +1,13 @@
 # Imager Changelog
 
+## 2.4.3.2 - 2020-09-24
+
+- Modified fillter `srcsetAttr` ( Support IE, Lazysize, placeholder )
+
+## 2.4.3.1 - 2020-09-23
+
+- Fixed `composer require dande/imager` not working.
+
 ## 2.4.3 - 2020-09-22
 
 - Add Azure blog Storage support ( Now, The Imager-craft support upload to Azure blog storage. )

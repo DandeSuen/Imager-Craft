@@ -127,6 +127,14 @@ class Settings extends Model
         ],
     ];
 
+    public $srcsetConfig = [
+      'srcDefault'  => 'max', // ['min', 'middle', 'max', 'first', 'center', 'last'] or Number
+      'PHType'      => 'silhouette', // ['silhouette','placeholder'] or null
+      'PHConfig'    => [],
+      'descriptor'  => 'w', // ['w', 'h', 'x+h', 'vw', 'vh', 'x']
+      'prefix'      => ''
+    ];
+
     public $storages = [];
     public $storageConfig = [
         'aws' => [
