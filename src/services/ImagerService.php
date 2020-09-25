@@ -18,7 +18,7 @@ use craft\helpers\FileHelper;
 use Imagine\Image\ImageInterface;
 
 use yii\base\ErrorException;
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
 
 use aelvan\imager\Imager as Plugin;
 use aelvan\imager\helpers\ImagerHelpers;
@@ -590,7 +590,7 @@ class ImagerService extends Component
                     FileHelper::clearDirectory(FileHelper::normalizePath($targetModel->path));
                 } catch (ErrorException $e) {
                     Craft::error('Could not clear directory "'.$targetModel->path.'" ('.$e->getMessage().')', __METHOD__);
-                } catch (InvalidParamException $e) {
+                } catch (InvalidArgumentException $e) {
                     Craft::error('Could not clear directory "'.$targetModel->path.'" ('.$e->getMessage().')', __METHOD__);
                 }
 
@@ -620,7 +620,7 @@ class ImagerService extends Component
             FileHelper::clearDirectory(FileHelper::normalizePath($path));
         } catch (ErrorException $e) {
             Craft::error('Could not clear directory "'.$path.'" ('.$e->getMessage().')', __METHOD__);
-        } catch (InvalidParamException $e) {
+        } catch (InvalidArgumentException $e) {
             Craft::error('Could not clear directory "'.$path.'" ('.$e->getMessage().')', __METHOD__);
         }
     }
@@ -636,7 +636,7 @@ class ImagerService extends Component
             FileHelper::clearDirectory(FileHelper::normalizePath($path));
         } catch (ErrorException $e) {
             Craft::error('Could not clear directory "'.$path.'" ('.$e->getMessage().')', __METHOD__);
-        } catch (InvalidParamException $e) {
+        } catch (InvalidArgumentException $e) {
             Craft::error('Could not clear directory "'.$path.'" ('.$e->getMessage().')', __METHOD__);
         }
     }

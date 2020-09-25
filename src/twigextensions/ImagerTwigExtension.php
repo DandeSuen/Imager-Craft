@@ -11,7 +11,8 @@
 namespace aelvan\imager\twigextensions;
 
 use Craft;
-
+use Twig\TwigFilter; // Twig_SimpleFilter
+use Twig\Extension\AbstractExtension;
 use aelvan\imager\Imager as Plugin;
 
 /**
@@ -25,7 +26,7 @@ use aelvan\imager\Imager as Plugin;
  * @package   Imager
  * @since     2.0.0
  */
-class ImagerTwigExtension extends \Twig_Extension
+class ImagerTwigExtension extends AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -50,10 +51,10 @@ class ImagerTwigExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('srcset', [$this, 'srcsetFilter']),
-            new \Twig_SimpleFilter('srcsetAttr', [$this, 'srcsetAttrFilter']),
-            new \Twig_SimpleFilter('srcsetCustomAttr', [$this, 'srcsetCustomAttrFilter']),
-            new \Twig_SimpleFilter('silhouette', [$this, 'silhouetteFilter']),
+            new TwigFilter('srcset', [$this, 'srcsetFilter']),
+            new TwigFilter('srcsetAttr', [$this, 'srcsetAttrFilter']),
+            new TwigFilter('srcsetCustomAttr', [$this, 'srcsetCustomAttrFilter']),
+            new TwigFilter('silhouette', [$this, 'silhouetteFilter']),
         ];
     }
     
