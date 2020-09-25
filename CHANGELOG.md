@@ -1,5 +1,10 @@
 # Imager Changelog
 
+## 2.4.3.4 - 2020-09-25
+
+- Modified: use `Twig\TwigFilter` instead `Twig_SimpleFilter`.
+- Modified: use `yii\base\InvalidArgumentException` instead `yii\base\InvalidParamException`.
+
 ## 2.4.3.2 - 2020-09-24
 
 - Modified fillter `srcsetAttr` ( Support IE, Lazysize, placeholder )
